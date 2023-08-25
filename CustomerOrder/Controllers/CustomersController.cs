@@ -1,4 +1,5 @@
-﻿using CustomerOrder.Models;
+﻿using CustomerOrder.Exceptions;
+using CustomerOrder.Models;
 using CustomerOrder.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -27,15 +28,25 @@ namespace CustomerOrder.Controllers
             return Ok(customers);
         }
 
+        [HttpGet("search")]
+        public async Task<ActionResult<List<Customer>>> SearchCustomersByEmail([FromQuery] string email)
+        {
+            var customers = await _customerService.SearchCustomersByEmailAsync(email);
+            if(customers.Count() > 0)
+                return Ok(customers);
+            else 
+                return NoContent();
+            
+        }
+
         [HttpPost]
         public IActionResult CreateCustomer([FromBody] Customer customer)
         {
             try
             {
-                // Call the service method to create the customer
                 var createdCustomer = _customerService.CreateCustomerAsync(customer).Result;
 
-                return CreatedAtAction(nameof(GetCustomer), new { id = createdCustomer.Id }, createdCustomer);
+                return Ok(createdCustomer);
             }
             catch (ValidationException ex)
             {
@@ -47,14 +58,27 @@ namespace CustomerOrder.Controllers
             }
         }
 
-        [HttpGet("{id}", Name = "GetCustomer")]
-        public IActionResult GetCustomer(int id)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCustomer(int id, Customer updatedCustomer)
         {
-            // Implement the logic to retrieve a customer by their ID
-            // You'll need to call the appropriate method in your service or repository
-            // Return the customer or a NotFound response if the customer doesn't exist
-            return NotFound();  // Return a 404 Not Found response
+            try
+            {
+                await _customerService.UpdateCustomerAsync(id, updatedCustomer);
+                return Ok(updatedCustomer);
+            }
+            catch (CustomerNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
-        
+
     }
 }

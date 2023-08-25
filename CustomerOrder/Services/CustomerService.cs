@@ -42,11 +42,44 @@ namespace CustomerOrder.Services
         }
 
         public async Task<List<Customer>> GetAllCustomersAsync() => await _customerRepository.GetAllAsync();
-        
+
+        public async Task<List<Customer>> SearchCustomersByEmailAsync(string email)
+        {
+            return await _customerRepository.GetCustomersByEmailAsync(email);
+        }
+
+        public async Task<Customer> UpdateCustomerAsync(int id, Customer updatedCustomer)
+        {
+            try
+            {
+                var existingCustomer = await _customerRepository.GetCustomerAsync(id);
+                if (existingCustomer == null)
+                {
+                    throw new CustomerNotFoundException("No customer with id: " + id + " was found. Update failed!");
+                }
+
+                var validationResult = await _customerValidator.ValidateAsync(updatedCustomer);
+
+                if (!validationResult.IsValid)
+                {
+                    throw new ValidationException(validationResult.Errors);
+                }
+
+                existingCustomer.FirstName = updatedCustomer.FirstName;
+                existingCustomer.LastName = updatedCustomer.LastName;
+                existingCustomer.Email = updatedCustomer.Email;
+
+                return await _customerRepository.UpdateAsync(existingCustomer);
+            }
+            catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
+            {
+                throw new DuplicateMailException("Email already exists.", ex);
+            }
+        }
+
 
         private bool IsUniqueConstraintViolation(DbUpdateException ex)
         {
-            // I Check if ex.InnerException is a SqlException and its number corresponds to a unique constraint violation
             return ex.InnerException is SqlException sqlEx && sqlEx.Number == 2627;
         }
     }

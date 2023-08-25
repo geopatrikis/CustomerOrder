@@ -1,6 +1,5 @@
 ﻿using CustomerOrder.Data;
 using CustomerOrder.Models;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace CustomerOrder.Repositories
@@ -23,5 +22,25 @@ namespace CustomerOrder.Repositories
         }
 
         public async Task<List<Customer>> GetAllAsync() => await _dbContext.Customers.ToListAsync();
+
+        public async Task<Customer?> GetCustomerAsync(int id)
+        {
+            return await _dbContext.Customers
+                .SingleOrDefaultAsync(customer => customer.Id == id);
+        }
+
+        public async Task<List<Customer>> GetCustomersByEmailAsync(string email)
+        {
+            return await _dbContext.Customers
+                    .Where(customer => customer.Email.Contains(email))
+                    .ToListAsync();
+        }
+
+        public async Task<Customer> UpdateAsync(Customer existingCustomer)
+        {
+            _dbContext.Entry(existingCustomer).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+            return existingCustomer;
+        }
     }
 }
