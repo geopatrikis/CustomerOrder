@@ -1,3 +1,4 @@
+using CustomerOrder.Cache;
 using CustomerOrder.Data;
 using CustomerOrder.Models;
 using CustomerOrder.Repositories;
@@ -21,6 +22,7 @@ builder.Services.AddScoped<IValidator<Customer>, CustomerValidator>();
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IValidator<Order>, OrderValidator>();
+builder.Services.AddSingleton<MyMemoryCache>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

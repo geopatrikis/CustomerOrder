@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using CustomerOrder.Exceptions;
 using Microsoft.Extensions.Caching.Memory;
+using CustomerOrder.Cache;
 
 namespace CustomerOrder.Services
 {
@@ -12,8 +13,8 @@ namespace CustomerOrder.Services
     {
         private readonly IValidator<Customer> _customerValidator;
         private readonly ICustomerRepository _customerRepository;
-        private readonly IMemoryCache _cache; 
-        public CustomerService(ICustomerRepository customerRepository, IValidator<Customer> customerValidator, IMemoryCache cache)
+        private readonly MyMemoryCache _cache; 
+        public CustomerService(ICustomerRepository customerRepository, IValidator<Customer> customerValidator, MyMemoryCache cache)
         {
             _customerRepository = customerRepository;
             _customerValidator = customerValidator;
@@ -50,13 +51,15 @@ namespace CustomerOrder.Services
             var cachedCustomers = _cache.Get<List<Customer>>(cacheKey);
             if (cachedCustomers != null)
             {
-                Console.WriteLine("from cache");
                 return cachedCustomers;
             }
 
             var customers = await _customerRepository.GetAllAsync();
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetSize(customers.Count).SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
 
-            _cache.Set(cacheKey, customers, TimeSpan.FromMinutes(10));
+
+            _cache.Set(cacheKey, customers,cacheEntryOptions );
 
             return customers;
         }
@@ -69,13 +72,15 @@ namespace CustomerOrder.Services
             var cachedCustomers = _cache.Get<List<Customer>>(cacheKey);
             if (cachedCustomers != null)
             {
-                Console.WriteLine("from cache");
                 return cachedCustomers;
             }
 
             var customers = await _customerRepository.GetCustomersByEmailAsync(email);
-
-            _cache.Set(cacheKey, customers, TimeSpan.FromMinutes(10));
+            if(customers!=null && customers.Count > 0) {
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSize(customers.Count).SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+                _cache.Set(cacheKey, customers, cacheEntryOptions);
+            }
 
             return customers;
         }
