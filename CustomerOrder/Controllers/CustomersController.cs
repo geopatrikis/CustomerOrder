@@ -11,14 +11,10 @@ namespace CustomerOrder.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly CustomerService _customerService;
-        private readonly OrderService _orderService;
-        private readonly IValidator<Order> _orderValidator;
 
-        public CustomersController(CustomerService customerService, OrderService orderService, IValidator<Order> orderValidator)
+        public CustomersController(CustomerService customerService)
         {
             _customerService = customerService;
-            _orderService = orderService;
-            _orderValidator = orderValidator;
         }
 
         [HttpGet]

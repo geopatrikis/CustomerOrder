@@ -4,6 +4,7 @@ using CustomerOrder.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using CustomerOrder.Exceptions;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CustomerOrder.Services
 {
@@ -11,11 +12,12 @@ namespace CustomerOrder.Services
     {
         private readonly IValidator<Customer> _customerValidator;
         private readonly ICustomerRepository _customerRepository;
-
-        public CustomerService(ICustomerRepository customerRepository, IValidator<Customer> customerValidator)
+        private readonly IMemoryCache _cache; 
+        public CustomerService(ICustomerRepository customerRepository, IValidator<Customer> customerValidator, IMemoryCache cache)
         {
             _customerRepository = customerRepository;
             _customerValidator = customerValidator;
+            _cache = cache;
         }
 
         public async Task<Customer> CreateCustomerAsync(Customer customer)
@@ -31,6 +33,7 @@ namespace CustomerOrder.Services
             try
             {
                 var createdCustomer = await _customerRepository.CreateAsync(customer);
+                _cache.Remove("AllCustomers");
                 return createdCustomer;
             }
             //I decided to throw exception in order to avoid redundant selects from database to check for existing emails.
@@ -40,12 +43,41 @@ namespace CustomerOrder.Services
             }
 
         }
+        public async Task<List<Customer>> GetAllCustomersAsync()
+        {
+            var cacheKey = "AllCustomers"; 
 
-        public async Task<List<Customer>> GetAllCustomersAsync() => await _customerRepository.GetAllAsync();
+            var cachedCustomers = _cache.Get<List<Customer>>(cacheKey);
+            if (cachedCustomers != null)
+            {
+                Console.WriteLine("from cache");
+                return cachedCustomers;
+            }
+
+            var customers = await _customerRepository.GetAllAsync();
+
+            _cache.Set(cacheKey, customers, TimeSpan.FromMinutes(10));
+
+            return customers;
+        }
 
         public async Task<List<Customer>> SearchCustomersByEmailAsync(string email)
         {
-            return await _customerRepository.GetCustomersByEmailAsync(email);
+            //This stores in the cache the searched string and not the actual email.
+            var cacheKey = $"email_{email}"; 
+
+            var cachedCustomers = _cache.Get<List<Customer>>(cacheKey);
+            if (cachedCustomers != null)
+            {
+                Console.WriteLine("from cache");
+                return cachedCustomers;
+            }
+
+            var customers = await _customerRepository.GetCustomersByEmailAsync(email);
+
+            _cache.Set(cacheKey, customers, TimeSpan.FromMinutes(10));
+
+            return customers;
         }
 
         public async Task<Customer> UpdateCustomerAsync(int id, Customer updatedCustomer)
@@ -69,7 +101,9 @@ namespace CustomerOrder.Services
                 existingCustomer.LastName = updatedCustomer.LastName;
                 existingCustomer.Email = updatedCustomer.Email;
 
-                return await _customerRepository.UpdateAsync(existingCustomer);
+                var retcustomer= await _customerRepository.UpdateAsync(existingCustomer);
+                _cache.Remove("AllCustomers");
+                return retcustomer;
             }
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
             {

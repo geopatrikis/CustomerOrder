@@ -15,5 +15,9 @@ namespace CustomerOrder.Models
 
         public DateTime CreationDate { get; set; }
 
+        public bool Cancelled { get; set; }
+
+        public int CustomerId { get; set; }
+
     }
 }
