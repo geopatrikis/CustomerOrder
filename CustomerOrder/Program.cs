@@ -16,10 +16,10 @@ builder.Services.AddDbContext<CustomerOrderDbContext>(options =>
 });
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IValidator<Customer>, CustomerValidator>();
-builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IOrderService, OrderService>(); 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IValidator<Order>, OrderValidator>();
 builder.Services.AddSingleton<MyMemoryCache>();

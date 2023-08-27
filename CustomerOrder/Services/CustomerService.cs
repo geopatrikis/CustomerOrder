@@ -9,7 +9,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace CustomerOrder.Services
 {
-    public class CustomerService
+    public class CustomerService:ICustomerService
     {
         private readonly MyMemoryCache _cache;
         private readonly IValidator<Customer> _customerValidator;
@@ -61,7 +61,7 @@ namespace CustomerOrder.Services
 
         public async Task<Customer> UpdateCustomerAsync(int id, Customer updatedCustomer)
         {
-            if (updatedCustomer.Id != id)
+            if (updatedCustomer.Id !=0 && updatedCustomer.Id != id)
                 throw new CustomerIdMissmatchException("There was an attempt to update the id of the customer. This action is forbidden!");
             try
             {
@@ -86,13 +86,16 @@ namespace CustomerOrder.Services
                 {
                     throw new ValidationException(validationResult.Errors);
                 }
-
+                existingCustomer.Id = id;
                 existingCustomer.FirstName = updatedCustomer.FirstName;
                 existingCustomer.LastName = updatedCustomer.LastName;
                 existingCustomer.Email = updatedCustomer.Email;
 
                 var retcustomer= await _customerRepository.UpdateAsync(existingCustomer);
-                _cache.Set($"Customer_{id}", retcustomer);
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                   .SetSize(1)
+                   .SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+                _cache.Set($"Customer_{id}", retcustomer,cacheEntryOptions);
                 return retcustomer;
             }
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))

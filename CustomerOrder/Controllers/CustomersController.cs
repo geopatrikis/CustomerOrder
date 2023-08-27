@@ -10,9 +10,9 @@ namespace CustomerOrder.Controllers
     [Route("api/customers")]
     public class CustomersController : ControllerBase
     {
-        private readonly CustomerService _customerService;
+        private readonly ICustomerService _customerService;
 
-        public CustomersController(CustomerService customerService)
+        public CustomersController(ICustomerService customerService)
         {
             _customerService = customerService;
         }
@@ -36,12 +36,11 @@ namespace CustomerOrder.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCustomer([FromBody] Customer customer)
+        public async Task<IActionResult> CreateCustomer([FromBody] Customer customer)
         {
             try
             {
-                var createdCustomer = _customerService.CreateCustomerAsync(customer).Result;
-
+                var createdCustomer = await _customerService.CreateCustomerAsync(customer);
                 return Ok(createdCustomer);
             }
             catch (ValidationException ex)
@@ -59,8 +58,8 @@ namespace CustomerOrder.Controllers
         {
             try
             {
-                await _customerService.UpdateCustomerAsync(id, updatedCustomer);
-                return Ok(updatedCustomer);
+                var ret_customer=await _customerService.UpdateCustomerAsync(id, updatedCustomer);
+                return Ok(ret_customer);
             }
             catch (CustomerNotFoundException ex)
             {

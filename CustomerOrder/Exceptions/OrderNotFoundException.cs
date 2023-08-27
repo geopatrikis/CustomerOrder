@@ -3,7 +3,7 @@
 namespace CustomerOrder.Exceptions
 {
     [Serializable]
-    internal class OrderNotFoundException : Exception
+    public class OrderNotFoundException : Exception
     {
         public OrderNotFoundException()
         {

@@ -10,19 +10,19 @@ namespace CustomerOrder.Controllers
     [Route("api/orders")]
     public class OrdersController : Controller
     {
-        private readonly OrderService _orderService;
+        private readonly IOrderService _orderService;
 
 
-        public OrdersController(OrderService orderService)
+        public OrdersController(IOrderService orderService)
         {
             _orderService = orderService;
         }
         [HttpPost("customer/{customerId}")]
-        public IActionResult CreateOrderForCustomer(int customerId, [FromBody] Order order)
+        public async Task<IActionResult> CreateOrderForCustomer(int customerId, [FromBody] Order order)
         {
             try
             {
-                var createdOrder = _orderService.CreateOrderForCustomerAsync(customerId, order).Result;
+                var createdOrder = await _orderService.CreateOrderForCustomerAsync(customerId, order);
 
                 return Ok(createdOrder);
             }
@@ -36,10 +36,10 @@ namespace CustomerOrder.Controllers
             }
         }
         [HttpGet("customer/{customerId}")]
-        public async Task<ActionResult<List<Customer>>> GetCustomerOrders(int customerId)
+        public async Task<ActionResult<List<Order>>> GetCustomerOrders(int customerId)
         {
             var orders = await _orderService.GetAllCustomerOrders(customerId);
-            if (orders!=null || orders.Count() > 0)
+            if (orders!=null && orders.Count > 0)
                 return Ok(orders);
             else
                 return NoContent();
@@ -60,7 +60,7 @@ namespace CustomerOrder.Controllers
         }
 
         [HttpGet("customer/{customerId}/Cancelled")]
-        public async Task<ActionResult<List<Customer>>> GetCancelledCustomerOrders(int customerId)
+        public async Task<ActionResult<List<Order>>> GetCancelledCustomerOrders(int customerId)
         {
             var orders = await _orderService.GetCancelledCustomerOrders(customerId);
             if (orders.Count() > 0)

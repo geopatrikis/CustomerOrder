@@ -9,7 +9,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace CustomerOrder.Services
 {
-    public class OrderService
+    public class OrderService:IOrderService
     {
         private readonly IValidator<Order> _orderValidator;
         private readonly IOrderRepository _orderRepository;

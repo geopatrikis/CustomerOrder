@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34018.315
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerOrder", "CustomerOrder\CustomerOrder.csproj", "{F4A39873-803C-4F8A-B2E8-B93F1588C711}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerOrder", "CustomerOrder\CustomerOrder.csproj", "{F4A39873-803C-4F8A-B2E8-B93F1588C711}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CustomerOrderDB", "CustomerOrderDB\CustomerOrderDB.sqlproj", "{914C45A9-99BA-4698-A564-B6700C196FDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerOrderTests", "CustomerOrderTests\CustomerOrderTests.csproj", "{2BA69925-1E74-4720-A3C1-94A76F4E6011}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{914C45A9-99BA-4698-A564-B6700C196FDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{914C45A9-99BA-4698-A564-B6700C196FDC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{914C45A9-99BA-4698-A564-B6700C196FDC}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{2BA69925-1E74-4720-A3C1-94A76F4E6011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BA69925-1E74-4720-A3C1-94A76F4E6011}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BA69925-1E74-4720-A3C1-94A76F4E6011}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BA69925-1E74-4720-A3C1-94A76F4E6011}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

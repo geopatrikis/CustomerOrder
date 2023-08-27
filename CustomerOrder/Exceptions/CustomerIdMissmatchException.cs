@@ -3,7 +3,7 @@
 namespace CustomerOrder.Exceptions
 {
     [Serializable]
-    internal class CustomerIdMissmatchException : Exception
+    public class CustomerIdMissmatchException : Exception
     {
         public CustomerIdMissmatchException()
         {

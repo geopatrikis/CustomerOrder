@@ -3,7 +3,7 @@
 namespace CustomerOrder.Exceptions
 {
     [Serializable]
-    internal class DuplicateMailException : Exception
+    public class DuplicateMailException : Exception
     {
         public DuplicateMailException()
         {
