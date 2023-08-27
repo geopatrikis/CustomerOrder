@@ -81,5 +81,13 @@ The port that is demonstrated in the examples might need to be altered.
 - **Curl Example:** curl -X PUT http://localhost:5090/api/orders/1/cancel
 
 
+# Setting up the Database 
+
+In the solution an SQL Project can be found. There 2 files exist for the creation of the tables and the indexes of the database. The database chosen for this implementation is SQL Server. After creating a new database and creating the tables and the indexes the connection string need to be altered
+"ConnectionStrings": {
+  "DefaultConnection": "Server=GIVE SERVER NAME;Database=GIVE DATABASE NAME;Trusted_Connection=True;TrustServerCertificate=True;" 
+}
+It might be needed to give username and password in the Connectionstring if this is how the authentication is configured.
+
 
 
