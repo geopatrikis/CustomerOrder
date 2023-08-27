@@ -81,13 +81,20 @@ The port that is demonstrated in the examples might need to be altered.
 - **Curl Example:** curl -X PUT http://localhost:5090/api/orders/1/cancel
 
 
-# Setting up the Database 
+#Setting Up the Database:
 
-In the solution an SQL Project can be found. There 2 files exist for the creation of the tables and the indexes of the database. The database chosen for this implementation is SQL Server. After creating a new database and creating the tables and the indexes the connection string need to be altered
-"ConnectionStrings": {
-  "DefaultConnection": "Server=GIVE SERVER NAME;Database=GIVE DATABASE NAME;Trusted_Connection=True;TrustServerCertificate=True;" 
-}
-It might be needed to give username and password in the Connectionstring if this is how the authentication is configured.
+    1.In the solution, an SQL Project contains scripts to create tables and indexes.
+    2.Create a new database in SQL Server.
+    3.Execute the provided SQL scripts to create tables and indexes in the new database.
+
+#Altering Connection String:
+
+    1.After creating tables and indexes, update the application's connection string.
+    2.Open appsettings.json in your project.
+    3.Locate the "ConnectionStrings" section.
+    4.Modify "DefaultConnection" with your SQL Server details:
+    5.Server=YOUR_SERVER_NAME;Database=YOUR_DATABASE_NAME;Trusted_Connection=True;TrustServerCertificate=True;
+    6.If needed, include username and password instead of usin trusted_connection and certificate.
 
 
 
