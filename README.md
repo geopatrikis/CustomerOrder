@@ -25,7 +25,7 @@ The port that is demonstrated in the examples might need to be altered.
 - **Method:** POST
 - **Endpoint:** `/api/customers`
 - **Data:** JSON object representing the customer
-- **Curl Example:** curl -X POST -H "Content-Type: application/json" -d '{"firstName": "John", "lastName": "Doe", "email": "johndoe@example.com"}' http://localhost:5090/api/customers
+- **Curl Example:** curl -X POST -H "Content-Type: application/json" -d "{\"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"johndoe@example.com\"}" http://localhost:5090/api/customers
 
 
 ## Update a Customer
@@ -35,7 +35,7 @@ The port that is demonstrated in the examples might need to be altered.
 - **Endpoint:** `/api/customers/{id}`
 - **Parameters:** `id` (path parameter)
 - **Data:** JSON object representing the updated customer
-- **Curl Example:** curl -X PUT -H "Content-Type: application/json" -d '{"firstName": "Updated", "lastName": "Doe", "email": "updated@example.com"}' http://localhost:5090/api/customers/1
+- **Curl Example:** curl -X PUT -H "Content-Type: application/json" -d "{\"firstName\": \"Updated\", \"lastName\": \"Doe\", \"email\": \"updated@example.com\"}" http://localhost:5090/api/customers/1
 
  ## Create Order for Customer
 
@@ -44,7 +44,7 @@ The port that is demonstrated in the examples might need to be altered.
 - **Endpoint:** `/api/orders/customer/{customerId}`
 - **Parameters:** `customerId` (path parameter)
 - **Data:** JSON object representing the order
-- **Curl Example:** curl -X POST -H "Content-Type: application/json" -d '{"description": "New Order", "price": 100.00, "creationDate": "2023-08-25T12:00:00", "cancelled": false}' http://localhost:5090/api/orders/customer/1
+- **Curl Example:** curl -X POST -H "Content-Type: application/json" -d "{\"description\": \"New Order\", \"price\": 100.00, \"creationDate\": \"2023-08-25T12:00:00\", \"cancelled\": false}" http://localhost:5090/api/orders/customer/1
 
   
 ## Get Customer Orders
