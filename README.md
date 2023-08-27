@@ -82,7 +82,7 @@ The port that is demonstrated in the examples might need to be altered.
 
 # Setting up the Project
 
-The project uses .NET 7 
+Target framework: .NET 7.0 
 
 ## Setting Up the Database:
 
