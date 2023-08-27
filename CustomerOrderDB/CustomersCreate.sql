@@ -5,3 +5,5 @@
     Email NVARCHAR(100) NOT NULL,
     CONSTRAINT UQ_Customers_Email UNIQUE (Email)
 );
+-- Indexes
+CREATE INDEX IX_Customers_Email ON Customers (Email);

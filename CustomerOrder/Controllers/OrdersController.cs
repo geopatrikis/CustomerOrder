@@ -39,7 +39,7 @@ namespace CustomerOrder.Controllers
         public async Task<ActionResult<List<Customer>>> GetCustomerOrders(int customerId)
         {
             var orders = await _orderService.GetAllCustomerOrders(customerId);
-            if (orders.Count() > 0)
+            if (orders!=null || orders.Count() > 0)
                 return Ok(orders);
             else
                 return NoContent();

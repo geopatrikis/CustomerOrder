@@ -4,16 +4,16 @@ using CustomerOrder.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using CustomerOrder.Exceptions;
-using Microsoft.Extensions.Caching.Memory;
 using CustomerOrder.Cache;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CustomerOrder.Services
 {
     public class CustomerService
     {
+        private readonly MyMemoryCache _cache;
         private readonly IValidator<Customer> _customerValidator;
         private readonly ICustomerRepository _customerRepository;
-        private readonly MyMemoryCache _cache; 
         public CustomerService(ICustomerRepository customerRepository, IValidator<Customer> customerValidator, MyMemoryCache cache)
         {
             _customerRepository = customerRepository;
@@ -30,11 +30,13 @@ namespace CustomerOrder.Services
                 throw new ValidationException(validationResult.Errors);
             }
 
-            // Perform additional business logic if needed
             try
             {
                 var createdCustomer = await _customerRepository.CreateAsync(customer);
-                _cache.Remove("AllCustomers");
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                   .SetSize(1)
+                   .SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+                _cache.Set($"Customer_{createdCustomer.Id}", createdCustomer,cacheEntryOptions);
                 return createdCustomer;
             }
             //I decided to throw exception in order to avoid redundant selects from database to check for existing emails.
@@ -46,55 +48,38 @@ namespace CustomerOrder.Services
         }
         public async Task<List<Customer>> GetAllCustomersAsync()
         {
-            var cacheKey = "AllCustomers"; 
-
-            var cachedCustomers = _cache.Get<List<Customer>>(cacheKey);
-            if (cachedCustomers != null)
-            {
-                return cachedCustomers;
-            }
-
             var customers = await _customerRepository.GetAllAsync();
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSize(customers.Count).SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
-
-
-            _cache.Set(cacheKey, customers,cacheEntryOptions );
-
             return customers;
         }
 
         public async Task<List<Customer>> SearchCustomersByEmailAsync(string email)
         {
-            //This stores in the cache the searched string and not the actual email.
-            var cacheKey = $"email_{email}"; 
-
-            var cachedCustomers = _cache.Get<List<Customer>>(cacheKey);
-            if (cachedCustomers != null)
-            {
-                return cachedCustomers;
-            }
 
             var customers = await _customerRepository.GetCustomersByEmailAsync(email);
-            if(customers!=null && customers.Count > 0) {
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSize(customers.Count).SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
-                _cache.Set(cacheKey, customers, cacheEntryOptions);
-            }
-
             return customers;
         }
 
         public async Task<Customer> UpdateCustomerAsync(int id, Customer updatedCustomer)
         {
+            if (updatedCustomer.Id != id)
+                throw new CustomerIdMissmatchException("There was an attempt to update the id of the customer. This action is forbidden!");
             try
             {
-                var existingCustomer = await _customerRepository.GetCustomerAsync(id);
+                var existingCustomer = _cache.TryGetValue($"Customer_{id}", out Customer? cachedCustomer) ? cachedCustomer : null;
+
                 if (existingCustomer == null)
                 {
-                    throw new CustomerNotFoundException("No customer with id: " + id + " was found. Update failed!");
-                }
+                    // If not found in cache, fetch from the database 
+                    existingCustomer = await _customerRepository.GetCustomerAsync(id);
 
+                    if (existingCustomer == null)
+                    {
+                        throw new CustomerNotFoundException("No customer with id: " + id + " was found. Update failed!");
+                    }
+
+                    // Cache the customer from the database
+                    //_cache.Set($"Customer_{id}", existingCustomer);
+                }
                 var validationResult = await _customerValidator.ValidateAsync(updatedCustomer);
 
                 if (!validationResult.IsValid)
@@ -107,7 +92,7 @@ namespace CustomerOrder.Services
                 existingCustomer.Email = updatedCustomer.Email;
 
                 var retcustomer= await _customerRepository.UpdateAsync(existingCustomer);
-                _cache.Remove("AllCustomers");
+                _cache.Set($"Customer_{id}", retcustomer);
                 return retcustomer;
             }
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))

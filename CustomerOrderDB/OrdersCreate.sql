@@ -6,3 +6,7 @@
     Cancelled BIT NOT NULL DEFAULT 0, 
     CustomerId INT NOT NULL REFERENCES Customers(Id)
 );
+-- Indexes 
+CREATE INDEX IX_Orders_Cancelled ON Orders (Cancelled);
+CREATE INDEX IX_Orders_CreationDate ON Orders (CreationDate);
+CREATE INDEX IX_Orders_CustomerId ON Orders (CustomerId);
