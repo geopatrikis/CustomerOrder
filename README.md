@@ -80,21 +80,24 @@ The port that is demonstrated in the examples might need to be altered.
 - **Parameters:** `orderId` (path parameter)
 - **Curl Example:** curl -X PUT http://localhost:5090/api/orders/1/cancel
 
+# Setting up the Project
 
-#Setting Up the Database:
+The project uses .NET 7 
 
-    1.In the solution, an SQL Project contains scripts to create tables and indexes.
-    2.Create a new database in SQL Server.
-    3.Execute the provided SQL scripts to create tables and indexes in the new database.
+## Setting Up the Database:
 
-#Altering Connection String:
+1. In the solution, an SQL Project contains scripts to create tables and indexes.
+2. Create a new database in SQL Server.
+3. Execute the provided SQL scripts to create tables and indexes in the new database.
 
-    1.After creating tables and indexes, update the application's connection string.
-    2.Open appsettings.json in your project.
-    3.Locate the "ConnectionStrings" section.
-    4.Modify "DefaultConnection" with your SQL Server details:
-    5.Server=YOUR_SERVER_NAME;Database=YOUR_DATABASE_NAME;Trusted_Connection=True;TrustServerCertificate=True;
-    6.If needed, include username and password instead of usin trusted_connection and certificate.
+## Altering Connection String:
+
+1. After creating tables and indexes, update the application's connection string.
+2. Open appsettings.json in your project.
+3. Locate the "ConnectionStrings" section.
+4. Modify "DefaultConnection" with your SQL Server details:
+5. Server=YOUR_SERVER_NAME;Database=YOUR_DATABASE_NAME;Trusted_Connection=True;TrustServerCertificate=True;
+6. If needed, include username and password instead of usin trusted_connection and certificate.
 
 
 
