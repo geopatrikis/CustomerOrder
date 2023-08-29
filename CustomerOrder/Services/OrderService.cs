@@ -13,8 +13,8 @@ namespace CustomerOrder.Services
     {
         private readonly IValidator<Order> _orderValidator;
         private readonly IOrderRepository _orderRepository;
-        private readonly MyMemoryCache _cache;
-        public OrderService(IOrderRepository rep, IValidator<Order> val, MyMemoryCache cache) {
+        private readonly IMemoryCache _cache;
+        public OrderService(IOrderRepository rep, IValidator<Order> val, IMemoryCache cache) {
             _orderRepository = rep;
             _orderValidator = val;
             _cache = cache;

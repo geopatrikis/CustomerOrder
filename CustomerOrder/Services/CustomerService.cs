@@ -11,10 +11,10 @@ namespace CustomerOrder.Services
 {
     public class CustomerService:ICustomerService
     {
-        private readonly MyMemoryCache _cache;
+        private readonly IMemoryCache _cache;
         private readonly IValidator<Customer> _customerValidator;
         private readonly ICustomerRepository _customerRepository;
-        public CustomerService(ICustomerRepository customerRepository, IValidator<Customer> customerValidator, MyMemoryCache cache)
+        public CustomerService(ICustomerRepository customerRepository, IValidator<Customer> customerValidator, IMemoryCache cache)
         {
             _customerRepository = customerRepository;
             _customerValidator = customerValidator;
