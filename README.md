@@ -41,19 +41,20 @@ The port that is demonstrated in the examples might need to be altered.
 
 - **Description:** Create an order for a specific customer.
 - **Method:** POST
-- **Endpoint:** `/api/orders/customer/{customerId}`
+- **Endpoint:** `/api/customers/{customerId}/orders`
 - **Parameters:** `customerId` (path parameter)
 - **Data:** JSON object representing the order
-- **Curl Example:** curl -X POST -H "Content-Type: application/json" -d "{\"description\": \"New Order\", \"price\": 100.00, \"creationDate\": \"2023-08-25T12:00:00\", \"cancelled\": false}" http://localhost:5090/api/orders/customer/1
+- **Curl Example:** curl -X POST -H "Content-Type: application/json" -d "{\"Description\": \"Sample order\", \"Price\": 50.00, \"CreationDate\": \"2023-08-25T12:00:00Z\",  \"Cancelled\": false}" http://localhost:5090/api/customers/1/orders
 
   
 ## Get Customer Orders
 
 - **Description:** Retrieve a list of orders for a specific customer.
 - **Method:** GET
-- **Endpoint:** `/api/orders/customer/{customerId}`
+- **Endpoint:** `/api/customers/{customerId}/orders`
 - **Parameters:** `customerId` (path parameter)
-- **Curl Example:** curl -X GET http://localhost:5090/api/orders/customer/1
+- **Curl Example:** curl -X GET http://localhost:5090/api/customers/1/orders
+
   
 ## Search Orders by Time Window
 
@@ -67,9 +68,9 @@ The port that is demonstrated in the examples might need to be altered.
 
 - **Description:** Retrieve a list of cancelled orders for a specific customer.
 - **Method:** GET
-- **Endpoint:** `/api/orders/customer/{customerId}/Cancelled`
+- **Endpoint:** `/api/customers/{customerId}/orders/cancelled`
 - **Parameters:** `customerId` (path parameter)
-- **Curl Example:** curl -X GET http://localhost:5090/api/orders/customer/1/Cancelled
+- **Curl Example:** curl -X GET http://localhost:5090/api/customers/1/orders/cancelled
 
   
 ## Cancel an Order
