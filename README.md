@@ -39,11 +39,25 @@ The port that is demonstrated in the examples might need to be altered.
 
  ## Create Order for Customer
 
-- **Description:** Create an order for a specific customer.
+- **Description:**
+Create an order for a specific customer.
+
+**Parameters:**
+- **customerId** (path parameter): The unique identifier of the customer for whom the order is to be created.
+
+**Request:**
 - **Method:** POST
-- **Endpoint:** `/api/customers/{customerId}/orders`
-- **Parameters:** `customerId` (path parameter)
-- **Data:** JSON object representing the order
+- **Headers:**
+  - Content-Type: application/json
+- **Body:**
+  ```json
+  {
+    "Description": "Sample order",
+    "Price": 50.00,
+    "CreationDate": "2023-08-25T12:00:00Z",
+    "Cancelled": false
+    // Other order details
+  }
 - **Curl Example:** curl -X POST -H "Content-Type: application/json" -d "{\"Description\": \"Sample order\", \"Price\": 50.00, \"CreationDate\": \"2023-08-25T12:00:00Z\",  \"Cancelled\": false}" http://localhost:5090/api/customers/1/orders
 
   
