@@ -37,39 +37,40 @@ The port that is demonstrated in the examples might need to be altered.
 - **Data:** JSON object representing the updated customer
 - **Curl Example:** curl -X PUT -H "Content-Type: application/json" -d "{\"firstName\": \"Updated\", \"lastName\": \"Doe\", \"email\": \"updated@example.com\"}" http://localhost:5090/api/customers/1
 
- ## Create Order for Customer
+ ### Create Order for Customer
 
 - **Description:** Create an order for a specific customer.
 - **Method:** POST
-- **Endpoint:** `/api/orders/customer/{customerId}`
+- **Endpoint:** `/api/orders/customer/{customerId}/`
 - **Parameters:** `customerId` (path parameter)
 - **Data:** JSON object representing the order
-- **Curl Example:** curl -X POST -H "Content-Type: application/json" -d "{\"description\": \"New Order\", \"price\": 100.00, \"creationDate\": \"2023-08-25T12:00:00\", \"cancelled\": false}" http://localhost:5090/api/orders/customer/1
+- **Curl Example:**
+  curl -X POST -H "Content-Type: application/json" -d '{"Description": "Sample order", "Price": 50.00, "CreationDate": "2023-08-25T12:00:00Z", "Cancelled": false}' http://localhost:5090/api/orders/customer/1
 
   
-## Get Customer Orders
+### Get Orders
 
-- **Description:** Retrieve a list of orders for a specific customer.
+- **Description:** Retrieve a list of orders based on specified parameters.
 - **Method:** GET
-- **Endpoint:** `/api/orders/customer/{customerId}`
-- **Parameters:** `customerId` (path parameter)
-- **Curl Example:** curl -X GET http://localhost:5090/api/orders/customer/1
-  
-## Search Orders by Time Window
+- **Endpoint:** `/api/orders`
+- **Parameters:**
+  - `customerId` (query parameter)
+  - `startTime` (query parameter)
+  - `endTime` (query parameter)
+  - `CancelledOnly` (query parameter)
 
-- **Description:** Search for orders within a specified time window.
-- **Method:** GET
-- **Endpoint:** `/api/orders/searchbytime`
-- **Parameters:** `startTime` (query parameter), `endTime` (query parameter)
-- **Curl Example:** curl -X GET "http://localhost:5090/api/orders/searchbytime?startTime=2023-01-01T00:00:00&endTime=2023-12-31T23:59:59"
-  
-## Get Cancelled Customer Orders
+**Curl Examples:**
 
-- **Description:** Retrieve a list of cancelled orders for a specific customer.
-- **Method:** GET
-- **Endpoint:** `/api/orders/customer/{customerId}/Cancelled`
-- **Parameters:** `customerId` (path parameter)
-- **Curl Example:** curl -X GET http://localhost:5090/api/orders/customer/1/Cancelled
+1. Retrieve all orders for a specific customer:
+    curl -X GET "http://localhost:5090/api/orders?customerId=1"
+    
+
+2. Search for orders within a specified time window:
+    curl -X GET "http://localhost:5090/api/orders?startTime=2023-01-01T00:00:00&endTime=2023-12-31T23:59:59"
+
+3. Retrieve a list of cancelled orders for a specific customer:
+    curl -X GET "http://localhost:5090/api/orders?customerId=1&CancelledOnly=true"
+
 
   
 ## Cancel an Order
